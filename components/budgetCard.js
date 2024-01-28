@@ -3,38 +3,47 @@ import {View, Text, StyleSheet, TextInput, TouchableOpacity, Keyboard} from 'rea
 import React, {useEffect, useState} from 'react';  
 import { getDatabase, ref, set , update, onValue, doc} from "firebase/database";
 import {lightColors} from '../lightMode.json';
+import firebase from 'firebase/app';
+import 'firebase/database';
 
 const lightTheme = {lightColors};
-function BudgetCard(){
-  const database = getDatabase();
-  const [budget, setBudget] = useState('');
-  
-  
-  const budgetItem = doc(db, 'users/budgets/food');
-  onValue(budgetItem, (snapshot) => {
-    const data = snapshot.val();
-    
-    console.log(data);
-  });
-  
 
+const BudgetCard = () =>{
+  
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const starCountRef = ref(db, 'users/');
+    onValue(starCountRef, (snapshot) => {
+      const data = snapshot.val();
+      const newPosts = Object.keys(data).map(key => ({
+        id:key,
+        ...data[key]
+      }));
+      console.log(newPosts);
+      setUserData(newPosts)
+    });
+  })
   return (
-    <View >
-      {budget.map((budget, index) => (
-        <View key={index} style={customInputStyles.container}>
-          <Text>{budget.budgetName} {budget.budgetUsed}/{budget.budget}</Text>
-          
-        </View>
+    <View style={styles.container}>
       
-      ))}
+      {
+        userData.map((item, index) => {
+          return( 
+            <View key={index}>
+              <Text>{item.budgetName}</Text>
+              <Text>{item.budget}</Text>
+            </View>
+          )
+        })
+      }
+      
     </View>
     
-
-
   );
-};
+}
 
-const customInputStyles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
