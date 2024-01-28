@@ -15,7 +15,7 @@ import {AboutScreen} from './About.js';
 
 function Goals() {
     const [text, setText] = useState('');
-    
+    const [numGoals, setNumGoals] = useState('0');
     return (
       <SafeAreaProvider>
         
