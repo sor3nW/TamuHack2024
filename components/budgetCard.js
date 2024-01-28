@@ -7,44 +7,41 @@ import firebase from 'firebase/app';
 import 'firebase/database';
 
 const lightTheme = {lightColors};
-function BudgetCard(){
-  const database = getDatabase();
-  const [budget, setBudget] = useState('');
+
+const BudgetCard = () =>{
   
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    const databaseRef = firebase.database().ref('users');
-
-    // Attach an event listener for value changes
-    const onValueChange = (snapshot) => {
+    const starCountRef = ref(db, 'users/');
+    onValue(starCountRef, (snapshot) => {
       const data = snapshot.val();
-      setUserData(data);
-    };
-
-    databaseRef.on('value', onValueChange);
-
-    // Clean up the event listener when the component unmounts
-    return () => databaseRef.off('value', onValueChange);
-  }, []); 
-  
-
+      const newPosts = Object.keys(data).map(key => ({
+        id:key,
+        ...data[key]
+      }));
+      console.log(newPosts);
+      setUserData(newPosts)
+    });
+  })
   return (
     <View style={styles.container}>
-      {userData && userData.budgets && (
-        Object.entries(userData.budgets).map(([budgetKey, budgetData]) => (
-          <View key={budgetKey} style={styles.card}>
-            <Text>{budgetData.budgetName}</Text>
-            <Text>Budget: {budgetData.Budget}</Text>
-          </View>
-        ))
-      )}
+      
+      {
+        userData.map((item, index) => {
+          return( 
+            <View key={index}>
+              <Text>{item.budgetName}</Text>
+              <Text>{item.budget}</Text>
+            </View>
+          )
+        })
+      }
+      
     </View>
     
-
-
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
