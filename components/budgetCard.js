@@ -13,26 +13,37 @@ const BudgetCard = () =>{
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    const starCountRef = ref(db, 'users/');
+    const starCountRef = ref(db, 'users/budgets/');
     onValue(starCountRef, (snapshot) => {
       const data = snapshot.val();
       const newPosts = Object.keys(data).map(key => ({
         id:key,
         ...data[key]
       }));
+      
       console.log(newPosts);
       setUserData(newPosts)
-    });
-  })
-  return (
-    <View style={styles.container}>
       
-      {
+    });
+  }, [])
+
+  return (
+    <View >
+      
+      {userData &&
         userData.map((item, index) => {
           return( 
-            <View key={index}>
-              <Text>{item.budgetName}</Text>
-              <Text>{item.budget}</Text>
+            <View key={index} style={styles.container}>
+              <View style={styles.column2}>
+                <Text style={{ fontSize: "22px", width:"auto"}}>Budget Name: {item.budgetName} </Text>
+                <Text style={{ fontSize: '22px', width: 'auto'}}> Usage: {item.budgetUsed}/{item.budget}</Text>
+              
+              </View>
+              <View style={styles.column1}>
+                <TouchableOpacity style={customInputStyles.button} onPress={create}>
+                  <Text style={customInputStyles.buttonText}>Submit</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           )
         })
@@ -45,13 +56,27 @@ const BudgetCard = () =>{
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    display: 'flex',
     alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
     borderWidth: 1,
     borderColor: 'lightgray',
     backgroundColor: lightColors.secondary,
+    height: 125,
+    marginTop: 10,
     borderRadius: 5,
     padding: 10,
+  },
+  column2: {
+    flex: 2, // Takes up 2/3 of the available space
+    backgroundColor: 'lightblue', // Adjust styles as needed
+    height: 100,
+  },
+  column1: {
+    flex: 1, // Takes up 1/3 of the available space
+    backgroundColor: 'lightgreen', // Adjust styles as needed
+    height: 100
   },
   input: {
     flex: 1,
