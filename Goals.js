@@ -12,17 +12,24 @@ import {useState} from 'react';
 import {images} from './Constants.json';
 import {SettingsScreen} from './Settings.js';
 import {AboutScreen} from './About.js';
-
+import firebase from 'firebase/app';
+import { db } from './firebase.js';
+import { getDatabase, ref, set , update} from "firebase/database";
+import CreateGoal from './components/createGoal.js';
+import GoalCard from './components/goalCard.js';
 function Goals() {
-    const [text, setText] = useState('');
-    const [numGoals, setNumGoals] = useState('0');
+    const lightTheme = {lightColors};
+    
     return (
-      <SafeAreaProvider>
-        
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text > Ello </Text>
-        </View>
-      </SafeAreaProvider>
+      <>
+      <ScrollView>
+      <View style={{flex: 1, marginTop: 50,backgroundColor: lightTheme.lightColors.background}}>
+        <Text style={{fontSize: 30, textAlign: 'center'}}>Your Goals</Text>
+        <CreateGoal />
+        <GoalCard />
+      </View>
+    </ScrollView>
+      </>
     );
   }
   const styles = StyleSheet.create({

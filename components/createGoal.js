@@ -5,45 +5,26 @@ import {lightColors} from '../lightMode.json';
 import { db } from '../firebase.js';
 const lightTheme = {lightColors};
 
-export default function WriteDataComponent() {
+export default function CreateGoal() {
   const [budget, setBudget] = useState('');
   const [tempBudget, setTempBudget] = useState('');
+  const [budgetName, setBudgetName] = useState('');
+
   const handleBudgetChange = (text) => {
     // Allow only numeric input
     const numericInput = text.replace(/[^0-9]/g, '');
     setTempBudget(numericInput);
     setBudget(numericInput);
   };
-
-
-  const handleSaveGoal = () => {
-    // You can use the 'budget' variable for further processing or state management
-    setBudget(tempGoal);
-    setTempGoal('');
-    console.log('Goal:', goal);
-
-    Keyboard.dismiss();
-  };
-
-  const handleSaveBudget = () => {
-    // You can use the 'budget' variable for further processing or state management
-    setBudget(tempBudget);
-    setTempBudget('');
-    console.log('Budget:', budget);
-
-    Keyboard.dismiss();
-  };
-  const [budgetName, setBudgetName] = useState('');
-  const [numGoals, setNumGoals] = useState(0);
-
+  
   function createBudget(){
     // const newKey = push(child(ref(database), 'users')).key;
-    set(ref(db, 'users/budgets/' + budgetName), {
-      budgetName: budgetName,
-      budget: budget,
-      budgetUsed: 0
+    set(ref(db, 'users/goals/' + budgetName), {
+      goalName: budgetName,
+      goal: budget,
+      totalSaved: 0
     }).then(() => {
-      alert('Budget Added')
+      alert('Goal Added')
     })
     .catch((error) => {
       alert(error)
@@ -53,29 +34,27 @@ export default function WriteDataComponent() {
   }
 
   
-
-  
   
   return (
       <>
       <View style={customInputStyles.container}>
         
         <TextInput
-            placeholder="Budget Name"
+            placeholder="Goal Name"
             value={budgetName}
             style={customInputStyles.input}
             onChangeText={(budgetName) => setBudgetName(budgetName)}
           />
           <TextInput
             keyboardType='numeric'
-            placeholder="Enter budget"
+            placeholder="Enter $Amount"
             value={tempBudget}
             style={customInputStyles.input}
             onChangeText={handleBudgetChange}
           />
 
           <TouchableOpacity style={customInputStyles.button} onPress={createBudget}>
-            <Text style={customInputStyles.buttonText}>Create</Text>
+            <Text style={customInputStyles.buttonText} >Create</Text>
           </TouchableOpacity>
       </View>
       </>

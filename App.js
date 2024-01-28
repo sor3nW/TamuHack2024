@@ -36,11 +36,14 @@ function HomeScreen() {
   const lightTheme = {lightColors};
 
   return (
-    <View style={{flex: 1, marginTop: 50,backgroundColor: lightTheme.lightColors.background}}>
-      <Text style={{fontSize: 30, textAlign: 'center'}}>Your Budgets</Text>
-      <WriteDataComponent/>
-      <BudgetCard/>
-    </View>
+    <ScrollView>
+      <View style={{flex: 1, marginTop: 50,backgroundColor: lightTheme.lightColors.background}}>
+        <Text style={{fontSize: 30, textAlign: 'center'}}>Your Budgets</Text>
+        <WriteDataComponent/>
+        <BudgetCard/>
+      </View>
+    </ScrollView>
+
   );
 }
 

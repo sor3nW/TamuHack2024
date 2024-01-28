@@ -8,7 +8,7 @@ import 'firebase/database';
 
 const lightTheme = {lightColors};
 
-const BudgetCard = () => {
+const GoalCard = () => {
   const [budget, setBudget] = useState('0');
   const [tempBudget, setTempBudget] = useState('');
   const [budgetUsed, setBudgetUsed] = useState('');
@@ -19,7 +19,7 @@ const BudgetCard = () => {
     setBudgetUsed(numericInput);
     setUserData((prevData) => {
       const newData = prevData.map((item) =>
-        item.id === id ? { ...item, budgetUsed: +numericInput || 0} : item
+        item.id === id ? { ...item, totalSaved: +numericInput || 0} : item
         
       );
       return newData;
@@ -29,10 +29,10 @@ const BudgetCard = () => {
   function Update(id, budgetName, budget, input){
     // const newKey = push(child(ref(database), 'users')).key;
 
-    update(ref(db, 'users/budgets/' + budgetName), {
-      budgetName: budgetName,
-      budget: budget,
-      budgetUsed: +input + (+userData.find((item) => item.id === id).budgetUsed)
+    update(ref(db, 'users/goals/' + budgetName), {
+      goalName: budgetName,
+      goal: budget,
+      totalSaved: +input + (+userData.find((item) => item.id === id).totalSaved)
     }).then(() => {
       alert('Budget Added')
     })
@@ -41,18 +41,18 @@ const BudgetCard = () => {
     });
   }
   const deleteBudget = (id) => {
-    remove(ref(db, `users/budgets/${id}`))
+    remove(ref(db, `users/goals/${id}`))
       .then(() => {
         // Remove the budget from the local state
         setUserData((prevData) => prevData.filter((item) => item.id !== id));
-        alert('Budget Deleted');
+        alert('goal Deleted');
       })
       .catch((error) => {
         alert(error);
       });
   };
   useEffect(() => {
-    const starCountRef = ref(db, 'users/budgets/');
+    const starCountRef = ref(db, 'users/goals/');
     onValue(starCountRef, (snapshot) => {
       const data = snapshot.val();
       const newPosts = Object.keys(data).map(key => ({
@@ -74,8 +74,8 @@ const BudgetCard = () => {
           return( 
             <View key={index} style={styles.container}>
               <View style={styles.column2}>
-                <Text style={{ fontSize: "22px", width:"auto"}}>Budget Name: {item.budgetName} </Text>
-                <Text style={{ fontSize: '22px', width: 'auto'}}> Usage: ${item.budgetUsed}/{item.budget}</Text>
+                <Text style={{ fontSize: "22px", width:"auto"}}>Goal Name: {item.goalName} </Text>
+                <Text style={{ fontSize: '22px', width: 'auto'}}> total saved: ${item.totalSaved}/{item.goal}</Text>
               
               </View>
               <View style={styles.column1}>
@@ -83,16 +83,16 @@ const BudgetCard = () => {
                   
                   <TextInput
                     keyboardType='numeric'
-                    placeholder="$ used"
+                    placeholder="$Saved"
                     style={styles.input}
                     onChangeText={(numbericInput) => handleUsedBudget(index, numbericInput)}
                   />
-                  <TouchableOpacity style={styles.button} onPress={() => Update(item.id, item.budgetName, item.budget, budgetUsed)} >
+                  <TouchableOpacity style={styles.button} onPress={() => Update(item.id, item.goalName, item.goal, budgetUsed)} >
                     <Text style={styles.buttonText}>Add</Text>
                   </TouchableOpacity>
                 </View>
                 <TouchableOpacity style={styles.button}>
-                  <Text style={styles.buttonText} onPress={() => deleteBudget(item.id)}>delete</Text>
+                  <Text style={styles.buttonText} onPress={() => deleteBudget(item.id, item.goalName, item.goal, budgetUsed)}>delete</Text>
                 </TouchableOpacity>
                 
               </View>
@@ -150,4 +150,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-export default BudgetCard;
+export default GoalCard;

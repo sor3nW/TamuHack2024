@@ -14,10 +14,23 @@ import {images} from './Constants.json';
 function SettingsScreen() {
   return (
     <View>
+    <View>
       <Text variant="headlineMedium" style = {styles.Profile}>Profile Page</Text>
+      <Button style = {styles.darkButt}
+        title="Dark Mode"
+        onPress={() => Alert.alert('Simple Button pressed')}
+      />
+         <Button style = {styles.lightButt}
+        title="Light Mode"
+        onPress={() => Alert.alert('Simple Button pressed')}
+      />
     </View>
-  );  
+    </View>
+    
+  ); 
 }
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -74,9 +87,13 @@ const styles = StyleSheet.create({
     height: 350,
     borderWidth: 3
   },
-  Text1: {
+  darkButt: {
+    color: 'black',
 
   },
+  lightButt: {
+    color: 'white',
+  }
 }
 );
 export default SettingsScreen;
