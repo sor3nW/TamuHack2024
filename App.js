@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet ,Button, View, Text, TextInput , FlatList,TouchableOpacity,Image,Modal} from 'react-native';
+import {StyleSheet ,Button, View, Text, TextInput , FlatList, TouchableOpacity, Image, Alert,Modal, ScrollView} from 'react-native';
 import { CommonActions, NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomNavigation , PaperProvider, DefaultTheme} from 'react-native-paper';
@@ -10,6 +10,17 @@ import {lightColors} from './lightMode.json';
 import {darkColors} from './darkMode.json';
 import {useState} from 'react';
 import {images} from './Constants.json';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+
+const firebaseConfig = {
+  apiKey: 'YOUR_API_KEY',
+  authDomain: 'YOUR_AUTH_DOMAIN',
+  projectId: 'YOUR_PROJECT_ID',
+  storageBucket: 'YOUR_STORAGE_BUCKET',
+  messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
+  appId: 'YOUR_APP_ID',
+};
 
 const customTheme = {
   ...DefaultTheme,
@@ -21,37 +32,43 @@ const customTheme = {
     
   },
 }
+
 function HomeScreen() {
   const lightTheme = {lightColors};
-  const [budget, setBudget] = useState('');
+  const [budget, setBudget] = useState(0);
+  const [tempbudget, settempBudget] = useState('');
+
+  const handleNumberInput = (text) => {
+    setBudget(text);
+  };
+  const handleInput = (text) => {
+    if (isNaN(text)){
+      Alert.alert('Please enter a valid number');
+    }else{
+      settempBudget(text);
+
+    }
+  }
+  
+
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center' ,backgroundColor: lightTheme.lightColors.background}}>
-      <Text variant="headlineMedium">Home!</Text>
-      <TextInput label="budget" value={budget} onChangeText={setBudget} />
+      <Text variant="headlineMedium">Budget: {budget}</Text>
+      <TextInput 
+
+        label="budget" 
+        value={tempbudget} 
+        placeholder="Enter your budget: " 
+        style={styles.input}
+        onChangeText={handleInput(value)}
+        onSubmitEditing={handleNumberInput}
+        
+        />
+      <Button title="Submit" onPress={handleNumberInput} />
 
     </View>
   );
 }
-
-function SettingsScreen() {
-  return (
-    <View style={styles.container}>
-      <Text variant="headlineMedium">Settings!</Text>
-    </View>
-  );  
-}
-function AboutScreen() {
-  return (
-      <SafeAreaProvider>
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{}}> Here is the about screen for Credit Confidence!  </Text>
-          <Image source={require('./assets/Turt.png')}></Image>
-
-        </View>
-      </SafeAreaProvider>
-  );
-}
-
 
 function Goals() {
   const [text, setText] = useState('');
@@ -60,19 +77,62 @@ function Goals() {
     <SafeAreaProvider>
       
       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text> Ello </Text>
+        <Text > Ello </Text>
       </View>
     </SafeAreaProvider>
   );
 }
-
+function AboutScreen() {
+  return (
+      <SafeAreaProvider>
+        <ScrollView style={{}}>
+            <Text style={{}}> Here is the about screen for Credit Confidence!  </Text>
+          <View style={{flex: 1, flexDirection: 'column'}}>
+            <Image source={require('./assets/Images/Nathan.jpg')} resizeMode=" center" style={{width: 200, height: 200}} />  
+          </View> 
+          <View>
+            <Image source={require('./assets/Images/Jib.jpg')} resizeMode=" center" style={{width: 200, height: 200}} />
+          </View> 
+          <View>
+            <Image source={require('./assets/Images/Soren.jpg')} resizeMode=" center" style={{width: 200, height: 200}} />
+          </View> 
+        </ScrollView>
+      </SafeAreaProvider>
+  );
+}
+function SettingsScreen() {
+  return (
+    <View>
+      <Text variant="headlineMedium" style = {styles.Profile}>Profile Page</Text>
+    </View>
+  );  
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-});
+  Profile: {
+   marginTop: 120,
+   marginLeft: 20,
+   color: 'blue',
+   fontSize: '30',
+   width: 200,
+   
+  },
+  input: {
+    height: 40,
+    width: 300,
+    borderColor: 'gray',
+    borderWidth: 1,
+    padding: 10,
+    marginVertical: 10,
+    borderRadius: 5,
+  },
+}
+);
+
 
 
 const Tab = createBottomTabNavigator();
@@ -177,4 +237,3 @@ export default function App() {
     </PaperProvider>
   );
 }
-
