@@ -1,5 +1,6 @@
 import React from 'react';
-import {StyleSheet ,Button, View, Text, TextInput , FlatList, TouchableOpacity, Image, Alert,Modal, ScrollView} from 'react-native';
+import './firebase';
+import {StyleSheet ,Button, View, Text, TextInput , FlatList, TouchableOpacity, Image, Alert,Modal, ScrollView, Keyboard, StatusBar} from 'react-native';
 import { CommonActions, NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomNavigation , PaperProvider, DefaultTheme} from 'react-native-paper';
@@ -12,15 +13,14 @@ import {useState} from 'react';
 import {images} from './Constants.json';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
-
-const firebaseConfig = {
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'YOUR_AUTH_DOMAIN',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_STORAGE_BUCKET',
-  messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-  appId: 'YOUR_APP_ID',
-};
+import WriteDataComponent from './components/writeDataComponent.js';
+import NumInputForm from './components/numInputForm.js';
+import BudgetCard from './components/budgetCard.js';
+import AboutScreen from './About.js';
+import Goals from './Goals.js';
+import SettingsScreen from './Settings.js';
+import { getDatabase, ref, onValue } from "firebase/database";
+import { db } from './firebase.js';
 
 const customTheme = {
   ...DefaultTheme,
@@ -34,79 +34,17 @@ const customTheme = {
 }
 
 function HomeScreen() {
+  
   const lightTheme = {lightColors};
-  const [budget, setBudget] = useState(0);
-  const [tempbudget, settempBudget] = useState('');
-
-  const handleNumberInput = (text) => {
-    setBudget(text);
-  };
-  const handleInput = (text) => {
-    if (isNaN(text)){
-      Alert.alert('Please enter a valid number');
-    }else{
-      settempBudget(text);
-
-    }
-  }
-  
 
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center' ,backgroundColor: lightTheme.lightColors.background}}>
-      <Text variant="headlineMedium">Budget: {budget}</Text>
-      <TextInput 
-
-        label="budget" 
-        value={tempbudget} 
-        placeholder="Enter your budget: " 
-        style={styles.input}
-        onChangeText={handleInput(value)}
-        onSubmitEditing={handleNumberInput}
-        
-        />
-      <Button title="Submit" onPress={handleNumberInput} />
-
+    <View style={{flex: 1, marginTop: 50,backgroundColor: lightTheme.lightColors.background}}>
+      <WriteDataComponent/>
     </View>
   );
 }
 
-function Goals() {
-  const [text, setText] = useState('');
-  
-  return (
-    <SafeAreaProvider>
-      
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text > Ello </Text>
-      </View>
-    </SafeAreaProvider>
-  );
-}
-function AboutScreen() {
-  return (
-      <SafeAreaProvider>
-        <ScrollView style={{}}>
-            <Text style={{}}> Here is the about screen for Credit Confidence!  </Text>
-          <View style={{flex: 1, flexDirection: 'column'}}>
-            <Image source={require('./assets/Images/Nathan.jpg')} resizeMode=" center" style={{width: 200, height: 200}} />  
-          </View> 
-          <View>
-            <Image source={require('./assets/Images/Jib.jpg')} resizeMode=" center" style={{width: 200, height: 200}} />
-          </View> 
-          <View>
-            <Image source={require('./assets/Images/Soren.jpg')} resizeMode=" center" style={{width: 200, height: 200}} />
-          </View> 
-        </ScrollView>
-      </SafeAreaProvider>
-  );
-}
-function SettingsScreen() {
-  return (
-    <View>
-      <Text variant="headlineMedium" style = {styles.Profile}>Profile Page</Text>
-    </View>
-  );  
-}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -130,8 +68,47 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRadius: 5,
   },
+  Nathan: {
+    width: 100,
+    height: 100,
+    borderRadius: 200, 
+    marginTop: 125,
+  },
+  Jib: {
+    width: 100,
+    height: 100,
+    borderRadius: 200, 
+    marginTop: 125,
+  }, 
+  Soren: {
+    width: 100,
+    height: 100,
+    borderRadius: 200,
+    marginTop: 125,
+  },
+  View1: {
+    backgroundColor: 'lightgrey',
+    height: 350,
+    borderWidth: 3
+  },
+  View2: {
+    backgroundColor: 'white',
+    height: 350,
+    borderWidth: 3
+  },
+  View3: {
+  backgroundColor: 'lightgrey',
+    height: 350,
+    borderWidth: 3
+  },
+  Text1: {
+
+
+  },
 }
 );
+
+
 
 
 
