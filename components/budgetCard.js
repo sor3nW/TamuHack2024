@@ -3,30 +3,42 @@ import {View, Text, StyleSheet, TextInput, TouchableOpacity, Keyboard} from 'rea
 import React, {useEffect, useState} from 'react';  
 import { getDatabase, ref, set , update, onValue, doc} from "firebase/database";
 import {lightColors} from '../lightMode.json';
+import firebase from 'firebase/app';
+import 'firebase/database';
 
 const lightTheme = {lightColors};
 function BudgetCard(){
   const database = getDatabase();
   const [budget, setBudget] = useState('');
   
-  
-  const budgetItem = doc(db, 'users/budgets/food');
-  onValue(budgetItem, (snapshot) => {
-    const data = snapshot.val();
-    
-    console.log(data);
-  });
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const databaseRef = firebase.database().ref('users');
+
+    // Attach an event listener for value changes
+    const onValueChange = (snapshot) => {
+      const data = snapshot.val();
+      setUserData(data);
+    };
+
+    databaseRef.on('value', onValueChange);
+
+    // Clean up the event listener when the component unmounts
+    return () => databaseRef.off('value', onValueChange);
+  }, []); 
   
 
   return (
-    <View >
-      {budget.map((budget, index) => (
-        <View key={index} style={customInputStyles.container}>
-          <Text>{budget.budgetName} {budget.budgetUsed}/{budget.budget}</Text>
-          
-        </View>
-      
-      ))}
+    <View style={styles.container}>
+      {userData && userData.budgets && (
+        Object.entries(userData.budgets).map(([budgetKey, budgetData]) => (
+          <View key={budgetKey} style={styles.card}>
+            <Text>{budgetData.budgetName}</Text>
+            <Text>Budget: {budgetData.Budget}</Text>
+          </View>
+        ))
+      )}
     </View>
     
 
@@ -34,7 +46,7 @@ function BudgetCard(){
   );
 };
 
-const customInputStyles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',

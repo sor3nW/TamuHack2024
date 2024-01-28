@@ -38,6 +38,7 @@ function HomeScreen() {
   return (
     <View style={{flex: 1, marginTop: 50,backgroundColor: lightTheme.lightColors.background}}>
       <WriteDataComponent/>
+      <BudgetCard/>
     </View>
   );
 }
