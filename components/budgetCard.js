@@ -3,7 +3,6 @@ import {View, Text, StyleSheet, TextInput, TouchableOpacity, Keyboard} from 'rea
 import React, {useEffect, useState} from 'react';  
 import { getDatabase, ref, set , update, onValue, doc} from "firebase/database";
 import {lightColors} from '../lightMode.json';
-import { getDatabase } from "firebase/database";
 
 const lightTheme = {lightColors};
 function BudgetCard(){
@@ -11,10 +10,10 @@ function BudgetCard(){
   const [budget, setBudget] = useState('');
   
   
-  const budgetItem = doc(db, 'users/budgets');
+  const budgetItem = doc(db, 'users/budgets/food');
   onValue(budgetItem, (snapshot) => {
     const data = snapshot.val();
-    updateStarCount(postElement, data);
+    
     console.log(data);
   });
   

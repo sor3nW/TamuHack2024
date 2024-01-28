@@ -19,8 +19,6 @@ import BudgetCard from './components/budgetCard.js';
 import AboutScreen from './About.js';
 import Goals from './Goals.js';
 import SettingsScreen from './Settings.js';
-import { getDatabase, ref, onValue } from "firebase/database";
-import { db } from './firebase.js';
 
 const customTheme = {
   ...DefaultTheme,
