@@ -32,7 +32,7 @@ export default function WriteDataComponent() {
       budget: budget,
       budgetUsed: 0
     }).then(() => {
-      alert('data uploaded')
+      alert('Budget Added')
     })
     .catch((error) => {
       alert(error)

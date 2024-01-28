@@ -40,8 +40,8 @@ const BudgetCard = () =>{
               
               </View>
               <View style={styles.column1}>
-                <TouchableOpacity style={customInputStyles.button} onPress={create}>
-                  <Text style={customInputStyles.buttonText}>Submit</Text>
+                <TouchableOpacity style={styles.button}>
+                  <Text style={styles.buttonText}>edit</Text>
                 </TouchableOpacity>
               </View>
             </View>
