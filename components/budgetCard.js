@@ -1,5 +1,5 @@
 import { db } from '../firebase.js';
-import {View, Text, StyleSheet, TextInput, TouchableOpacity, Keyboard} from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Keyboard} from 'react-native';
 import React, {useEffect, useState} from 'react';  
 import { getDatabase, ref, set , update, onValue, doc, remove} from "firebase/database";
 import {lightColors} from '../lightMode.json';

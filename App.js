@@ -1,25 +1,84 @@
 import React from 'react';
+import {useState, useEffect, useRef} from 'react';
 import './firebase';
 import {StyleSheet ,Button, View, Text, TextInput , FlatList, TouchableOpacity, Image, Alert,Modal, ScrollView, Keyboard, StatusBar} from 'react-native';
 import { CommonActions, NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomNavigation , PaperProvider, DefaultTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {lightColors} from './lightMode.json';
-import {darkColors} from './darkMode.json';
-import {useState} from 'react';
-import {images} from './Constants.json';
-import firebase from 'firebase/app';
 import 'firebase/firestore';
 import WriteDataComponent from './components/writeDataComponent.js';
-import NumInputForm from './components/numInputForm.js';
 import BudgetCard from './components/budgetCard.js';
 import AboutScreen from './About.js';
 import Goals from './Goals.js';
 import SettingsScreen from './Settings.js';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
+async function sendPushNotification(expoPushToken) {
+  const message = {
+    to: expoPushToken,
+    sound: 'default',
+    title: 'Original Title',
+    body: 'And here is the body!',
+    data: { someData: 'goes here' },
+  };
+
+  await fetch('https://exp.host/--/api/v2/push/send', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Accept-encoding': 'gzip, deflate',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(message),
+  });
+}
+
+async function registerForPushNotificationsAsync() {
+  let token;
+
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  if (Device.isDevice) {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    token = await Notifications.getExpoPushTokenAsync({
+      projectId: Constants.expoConfig.extra.eas.projectId,
+    });
+    console.log(token);
+  } else {
+    alert('Must use physical device for Push Notifications');
+  }
+
+  return token.data;
+}
 const customTheme = {
   ...DefaultTheme,
   colors: {
@@ -34,6 +93,27 @@ const customTheme = {
 function HomeScreen() {
   
   const lightTheme = {lightColors};
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
+  
+  useEffect(() => {
+    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+    
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log(response);
+    });
+
+    return () => {
+      Notifications.removeNotificationSubscription(notificationListener.current);
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
 
   return (
     <ScrollView>
@@ -41,6 +121,21 @@ function HomeScreen() {
         <Text style={{fontSize: 30, textAlign: 'center'}}>Your Budgets</Text>
         <WriteDataComponent/>
         <BudgetCard/>
+        <Text>Your expo push token: {expoPushToken}</Text>
+        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+          <Text>Title: {notification && notification.request.content.title} </Text>
+          <Text>Body: {notification && notification.request.content.body}</Text>
+          <Text>Data: {notification && JSON.stringify(notification.request.content.data)}</Text>
+        </View>
+        <Button
+          title="Press to Send Notification"
+          onPress={async () => {
+            await sendPushNotification(expoPushToken);
+            token = await Notifications.getExpoPushTokenAsync({
+              projectId: Constants.expoConfig.extra.eas.projectId,
+            });
+          }}
+        />
       </View>
     </ScrollView>
 

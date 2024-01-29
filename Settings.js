@@ -17,7 +17,7 @@ function SettingsScreen() {
     <View>
       <Text variant="headlineMedium" style = {styles.Profile}>Profile Page</Text>
       <Button style = {styles.darkButt}
-        title="Dark Mode"
+        title="Self destruct"
         onPress={() => Alert.alert('Simple Button pressed')}
       />
          <Button style = {styles.lightButt}
